@@ -26,6 +26,27 @@
 
 ### Docker Compose usage
 
+```
+version: '3'
+services:
+	apache-php:
+		container_name: apache-php
+		restart: always
+		image: martinbouillaud/apache-php:latest
+		volumes:
+			- $PWD/app:/app
+		ports:
+			- 80:80
+```
+
 ### Docker Run usage
 
+```
+docker run --detach \
+    --name apache-php \
+    --publish 80:80 \
+    --restart always \
+    --volume /docker/data/www:/app \
+    martinbouillaud/apache-php:latest
+```
 
