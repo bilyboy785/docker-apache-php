@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Build & Publish image on Docker Hub
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   push_to_registry:
-    name: Push Docker image to Docker Hub
+    name: Build & Publish image on Docker Hub
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
