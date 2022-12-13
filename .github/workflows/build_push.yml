@@ -1,0 +1,44 @@
+name: Build & Publish on Docker Hub
+
+on:
+  push:
+    tags: [ '*' ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64, linux/arm/v7, linux/arm64/v8
+          push: true
+          tags: |
+            martinbouillaud/apache-php:latest
+            martinbouillaud/apache-php:$(git describe --tags --abbrev=0)
+            ghcr.io/bilyboy785/apache-php:latest
+            ghcr.io/bilyboy785/apache-php:$(git describe --tags --abbrev=0)
