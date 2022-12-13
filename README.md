@@ -1,51 +1,65 @@
-# apache-php docker image
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)  [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://https://docker.com/) [![Docker Pulls](https://badgen.net/docker/pulls/martinbouillaud/apache-php?icon=docker&label=pulls)](https://hub.docker.com/r/martinbouillaud/apache-php)  [![Docker Image Size](https://img.shields.io/docker/image-size/martinbouillaud/apache-php?sort=date)](https://hub.docker.com/r/martinbouillaud/apache-php/) ![Github last-commit](https://img.shields.io/github/last-commit/bilyboy785/docker-apache-php)
+## Docker Apache PHP
 
-## Tags
- * **latest** : martinbouillaud/apache-php:latest -> martinbouillaud/apache-php:8.1
- * **8.1** : martinbouillaud/apache-php:8.1
- * **8.0** : martinbouillaud/apache-php:8.0
- * **7.4** : martinbouillaud/apache-php:7.4
+Basic image with Apache & PHP 8.1 based on Alpine 3.17
 
-## Volumes
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity) [![Docker Pulls](https://badgen.net/docker/pulls/martinbouillaud/apache-php?icon=docker&label=pulls)](https://hub.docker.com/r/martinbouillaud/apache-php:latest)  [![Docker Image Size](https://img.shields.io/docker/image-size/martinbouillaud/apache-php?sort=date)](https://hub.docker.com/r/martinbouillaud/apache-php/) [![Github last-commit](https://img.shields.io/github/last-commit/bilyboy785/docker-apache-php)](https://github.com/bilyboy785/apache-php) ![Push to Docker Hub](https://github.com/bilyboy785/docker-apache-php/actions/workflows/push_docker_hub.yml/badge.svg) ![Push to Github Registry](https://github.com/bilyboy785/docker-apache-php/actions/workflows/push_github_registry.yml/badge.svg)
 
-| Volume   | Description  |  
-|---|---|
-| /app  | Sources files for your Website  | 
-|  /errors |  html files for generic errors  |
-| /etc/apache2/conf-available/z-app.conf  |  Apache2 Main configuration file |
-| /etc/apache2/sites-available/000-default.conf  |  Main virtualhost configuration |
-| /usr/local/etc/php/conf.d/app.ini | PHP configuration file (php.ini) |
+## Docker Image Utilization
 
-## Ports
+* Now you can pull image
 
-| Port   | Description  |  
-|---|---|
-| 80 | Main default port to communicate with  | 
-
-### Docker Compose usage
-
-```
-version: '3'
-services:
-  apache-php:
-    container_name: apache-php
-    restart: always
-    image: martinbouillaud/apache-php:latest
-    volumes:
-      - $PWD/app:/app
-    ports:
-      - 80:80
+```bash
+docker pull martinbouillaud/apache-php:latest
 ```
 
-### Docker Run usage
+## Define environnement variables
 
+- `SERVER_ADMIN` (a [server admin](https://httpd.apache.org/docs/2.4/fr/mod/core.html#serveradmin), defaults to `you@example.com`)
+- `HTTP_SERVER_NAME` (a [server name](https://httpd.apache.org/docs/2.4/fr/mod/core.html#servername), defaults to `www.example.com`)
+- `LOG_LEVEL` (a [log level](https://httpd.apache.org/docs/2.4/fr/mod/core.html#loglevel), defaults to `info`)
+- `TZ` (a [timezone](https://www.php.net/manual/timezones.php), defaults to `UTC`)
+- `PHP_MEMORY_LIMIT` (a [memory-limit](https://www.php.net/manual/ini.core.php#ini.memory-limit), defaults to `256M`)
+- `PHP_UPLOAD_MAX_FILESIZE` (a [upload_max_filesize](https://www.php.net/manual/fr/ini.core.php#ini.upload-max-filesize), defaults to `8M`)
+- `PHP_POST_MAX_SIZE` (a [post_max_size](https://www.php.net/manual/fr/ini.core.php#ini.post-max-size), defaults to `8M`)
+
+### Build
+
+Replace *apache-php* and tags with whatever you want when building your own image.
+
+```sh
+docker build -t apache-php:latest .
 ```
-docker run --detach \
-    --name apache-php \
+
+## Run
+
+```bash
+docker run -d --name nixstatswh -p 80:80 martinbouillaud/apache-php:latest
+```
+
+## Customized run
+
+```sh
+docker run -d \
+    --name nixstatswh \
+    -e HTTP_SERVER_NAME="www.example.xyz" \
+    -e TZ="Europe/Paris" \
+    -e PHP_MEMORY_LIMIT="512M" \
     --publish 80:80 \
-    --restart always \
-    --volume /docker/data/www:/app \
+    --restart unless-stopped \
     martinbouillaud/apache-php:latest
 ```
 
+## Docker-compose Stack
+
+```
+version: "3.3"
+nixstatswh:
+    container_name: apache-php
+    image: martinbouillaud/apache-php:latest
+    ports:
+        - "8080:80"
+    environment:
+        - HTTP_SERVER_NAME=apache-php.example.com
+        - TZ=Europe/Paris
+        - PHP_MEMORY_LIMIT=1024M
+```
