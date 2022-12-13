@@ -12,6 +12,19 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            martinbouillaud/apache-php
+            ghcr.io/bilyboy85/apache-php
+          tags: |
+            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ env.TAG }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.TAG }}
+            type=semver,pattern={{major}},value=${{ env.TAG }}
+      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
@@ -37,8 +50,5 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/arm64/v8
           push: true
-          tags: |
-            martinbouillaud/apache-php:latest
-            martinbouillaud/apache-php:$(git describe --tags --abbrev=0)
-            ghcr.io/bilyboy785/apache-php:latest
-            ghcr.io/bilyboy785/apache-php:$(git describe --tags --abbrev=0)
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

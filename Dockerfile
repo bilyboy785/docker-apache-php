@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM alpine:3.17
 LABEL maintainer="contact@bouillaudmartin.fr"
 LABEL description="Alpine based image with apache2 and php8"
