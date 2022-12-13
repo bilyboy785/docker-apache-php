@@ -1,28 +1,40 @@
-# Dockerfile
-FROM php:8.2-apache
+FROM alpine:3.17
+LABEL maintainer="contact@bouillaudmartin.fr"
+LABEL description="Alpine based image with apache2 and php8"
+
+# Setup apache and php
+RUN apk --no-cache --update \
+    add apache2 \
+    curl \
+    php-apache2 \
+    php-bcmath \
+    php-bz2 \
+    php-calendar \
+    php-common \
+    php-ctype \
+    php-curl \
+    php-dom \
+    php-gd \
+    php-iconv \
+    php-mbstring \
+    php-mysqli \
+    php-mysqlnd \
+    php-openssl \
+    php-pdo_mysql \
+    php-pdo_pgsql \
+    php-pdo_sqlite \
+    php-phar \
+    php-session \
+    php-xml \
+    && mkdir /htdocs
 
 EXPOSE 80
-WORKDIR /app
 
-# git, unzip & zip are for composer
-RUN apt-get update -qq && \
-    apt-get install -qy \
-    git \
-    gnupg \
-    unzip \
-    zip && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+VOLUME /htdocs
 
-# PHP Extensions
-RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql
-COPY conf/php.ini /usr/local/etc/php/conf.d/app.ini
+ADD docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
 
-# Apache
-COPY errors /errors
-COPY conf/vhost.conf /etc/apache2/sites-available/000-default.conf
-COPY conf/apache.conf /etc/apache2/conf-available/z-app.conf
-COPY conf/index.php /app/index.php
-COPY conf/info.php /app/info.php
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 CMD curl -X GET --fail http://localhost:80 || exit 1
 
-RUN a2enmod rewrite remoteip && \
-    a2enconf z-app
+ENTRYPOINT ["/docker-entrypoint.sh"]
