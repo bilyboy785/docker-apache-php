@@ -16,12 +16,11 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # list of Docker images to use as base name for tags
           images: |
             martinbouillaud/apache-php
             ghcr.io/bilyboy85/apache-php
           tags: |
-            type=semver,pattern={{major}},value=${{ env.TAG }}
+            type=ref,event=tag
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -49,4 +48,3 @@ jobs:
           platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/arm64/v8
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
