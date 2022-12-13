@@ -35,14 +35,14 @@ docker build -t apache-php:latest .
 ## Run
 
 ```bash
-docker run -d --name nixstatswh -v /opt/myapp:/htdocs -p 80:80 martinbouillaud/apache-php:latest
+docker run -d --name apache-php -v /opt/myapp:/htdocs -p 80:80 martinbouillaud/apache-php:latest
 ```
 
 ## Customized run
 
 ```sh
 docker run -d \
-    --name nixstatswh \
+    --name apache-php \
     -e HTTP_SERVER_NAME="www.example.xyz" \
     -e TZ="Europe/Paris" \
     -e PHP_MEMORY_LIMIT="512M" \
@@ -56,7 +56,7 @@ docker run -d \
 
 ```
 version: "3.3"
-nixstatswh:
+apache-php:
     container_name: apache-php
     image: martinbouillaud/apache-php:latest
     ports:
