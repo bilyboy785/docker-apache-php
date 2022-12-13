@@ -1,4 +1,4 @@
-## Docker Apache PHP
+## Basic docker Apache PHP
 
 Basic image with Apache & PHP 8.1 based on Alpine 3.17
 
@@ -6,13 +6,11 @@ Basic image with Apache & PHP 8.1 based on Alpine 3.17
 
 ## Docker Image Utilization
 
-* Now you can pull image
-
 ```bash
 docker pull martinbouillaud/apache-php:latest
 ```
 
-## Define environnement variables
+## Environnement variables
 
 - `SERVER_ADMIN` (a [server admin](https://httpd.apache.org/docs/2.4/fr/mod/core.html#serveradmin), defaults to `you@example.com`)
 - `HTTP_SERVER_NAME` (a [server name](https://httpd.apache.org/docs/2.4/fr/mod/core.html#servername), defaults to `www.example.com`)
@@ -21,6 +19,10 @@ docker pull martinbouillaud/apache-php:latest
 - `PHP_MEMORY_LIMIT` (a [memory-limit](https://www.php.net/manual/ini.core.php#ini.memory-limit), defaults to `256M`)
 - `PHP_UPLOAD_MAX_FILESIZE` (a [upload_max_filesize](https://www.php.net/manual/fr/ini.core.php#ini.upload-max-filesize), defaults to `8M`)
 - `PHP_POST_MAX_SIZE` (a [post_max_size](https://www.php.net/manual/fr/ini.core.php#ini.post-max-size), defaults to `8M`)
+
+## Volumes
+
+ - `/htdocs` default docroot inside this container
 
 ### Build
 
@@ -33,7 +35,7 @@ docker build -t apache-php:latest .
 ## Run
 
 ```bash
-docker run -d --name nixstatswh -p 80:80 martinbouillaud/apache-php:latest
+docker run -d --name nixstatswh -v /opt/myapp:/htdocs -p 80:80 martinbouillaud/apache-php:latest
 ```
 
 ## Customized run
@@ -44,6 +46,7 @@ docker run -d \
     -e HTTP_SERVER_NAME="www.example.xyz" \
     -e TZ="Europe/Paris" \
     -e PHP_MEMORY_LIMIT="512M" \
+    -v /opt/myapp:/htdocs \
     --publish 80:80 \
     --restart unless-stopped \
     martinbouillaud/apache-php:latest
@@ -62,4 +65,6 @@ nixstatswh:
         - HTTP_SERVER_NAME=apache-php.example.com
         - TZ=Europe/Paris
         - PHP_MEMORY_LIMIT=1024M
+    volumes:
+        - /opt/myapp:/htdocs
 ```
